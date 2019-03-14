@@ -122,7 +122,7 @@ class FileManager {
      */
     public function move_uploded_file($file, $path) {
         // Check if $path end with /
-        if(substr($path, strlen($path) - 1, 1) !== '/') 
+        if(substr($path, - 1) !== '/') 
             $path .= '/';
         // Backup destination file if it already exist to avoid accidental overwrite
         if(self::file_exists($path . basename($file)))
