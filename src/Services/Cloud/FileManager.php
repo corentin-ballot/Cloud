@@ -175,4 +175,27 @@ class FileManager {
             return unlink(self::file_path($path));
         return false;
     }
+
+    /**
+     * Delete dir in the server.
+     * 
+     * @param path Relative dir path
+     * @return boolean True on success, False otherwise
+     */
+    public function delete_dir($path) {
+        if(self::file_exists($path) && self::is_dir($path)){
+            $objects = scandir(self::file_path($path));
+            foreach ($objects as $object) {
+              if ($object != "." && $object != "..") {
+                if (self::is_dir($path."/".$object)) 
+                    self::delete_dir($path."/".$object); 
+                else 
+                    self::delete_file($path."/".$object);
+              }
+            }
+            reset($objects);
+            rmdir(self::file_path($path)); 
+        }
+        return true;
+    }
 }
