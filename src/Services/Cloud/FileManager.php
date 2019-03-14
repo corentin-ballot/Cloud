@@ -12,7 +12,7 @@ class FileManager {
      * @return string Absolute file path in the server. 
      */
     public function file_path($path) {
-        return self::ROOT_PATH . (substr($path, 0, 1) == '/'?'':'/') . $path;
+        return self::ROOT_PATH . (substr($path, -1) == '/'?'':'/') . $path;
     }
 
     /**
