@@ -16,6 +16,16 @@ class FileManager {
     }
 
     /**
+     * Generate relative file path from absolute one.
+     * 
+     * @param path Absolute file/directory path
+     * @return string Relative file path in the server. 
+     */
+    public function relative_path($path) {
+        return str_replace(self::ROOT_PATH, '', $path);
+    }
+
+    /**
      * Check if file/directory exists in the server.
      * 
      * @param path Relative file/directory path
