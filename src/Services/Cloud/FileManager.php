@@ -46,6 +46,16 @@ class FileManager {
     }
 
     /**
+     * Check if path is a directory.
+     * 
+     * @param path Relative file/directory path
+     * @return boolean True if it is a directory, False otherwise
+     */
+    public function is_dir($path) {
+        return is_dir(self::file_path($path));
+    }
+
+    /**
      * Create missing directories of a path.
      * 
      * @param path Relative path
