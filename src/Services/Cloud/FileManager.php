@@ -235,4 +235,53 @@ class FileManager {
         
         return $content;
     }
+
+    /**
+     * Zip files and sub directories
+     * 
+     * @param path Relative directory path
+     * @param array<path> Relative paths to zip
+     * @return path Relative zip path 
+     */
+    public function zip_files($path, $files){
+        $zipname = self::file_path($path.'/'.date("YmdHis").'.zip');
+        $zip = new ZipArchive();
+        $zip->open($zipname, ZipArchive::CREATE);
+        foreach ($files as $file) {
+            if (self::is_file($file)) {
+                $zip->addFile(self::file_path($file), basename($file));
+            }
+            else if (self::is_dir($file)) {
+                $pathInfo = pathInfo(self::file_path($file));
+                $parentPath = $pathInfo['dirname'];
+                $dirName = $pathInfo['basename'];
+                $zip->addEmptyDir($dirName);
+                self::dir_to_zip(self::file_path($file), $zip, strlen("$parentPath/"));
+            }
+        }
+        $zip->close();
+        return self::relative_path($zipname);
+    }
+
+    /**
+     * Add files and sub-directories in a directory in the zip file.
+     */
+    private static function dir_to_zip($dir, &$zipFile, $exclusiveLength) {
+        $handle = opendir($dir);
+        while (false !== $f = readdir($handle)) {
+            if ($f != '.' && $f != '..') {
+                $filePath = "$dir/$f";
+                // Remove prefix from file path before add to zip.
+                $localPath = substr($filePath, $exclusiveLength);
+                if (is_file($filePath)) {
+                    $zipFile->addFile($filePath, $localPath);
+                } elseif (is_dir($filePath)) {
+                    // Add sub-directory.
+                    $zipFile->addEmptyDir($localPath);
+                    self::dir_to_zip($filePath, $zipFile, $exclusiveLength);
+                }
+            }
+        }
+        closedir($handle);
+    }
 }
