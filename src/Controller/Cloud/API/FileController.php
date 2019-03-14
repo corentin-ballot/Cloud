@@ -163,7 +163,7 @@ class FileController
         $response->setContent(json_encode([
             'msg'=> self::$http_errors[$code],
             'detail' => $msg
-        ]));
+        ], JSON_UNESCAPED_SLASHES));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
