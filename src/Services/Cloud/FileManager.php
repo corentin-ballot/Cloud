@@ -86,6 +86,22 @@ class FileManager {
     }
 
     /**
+     * Create new empty dir in the server.
+     * 
+     * @param path Relative directory path
+     * @return boolean True on success, FALSE otherwise
+     */
+    public function create_dir($path) {
+        // Create path to avoid error
+        self::create_path($path);
+        // Create file
+        error_reporting(E_ERROR | E_PARSE);
+        $result = mkdir(self::file_path($path));
+        error_reporting(E_ALL ^ E_WARNING);
+        return $result;
+    }
+
+    /**
      * Create backup of a file.
      * 
      * @param path Relative file/directory path
