@@ -39,7 +39,7 @@ class FileManager {
      * Check if path is a file.
      * 
      * @param path Relative file/directory path
-     * @return boolean True if file exist, False otherwise
+     * @return boolean True if it is a file, False otherwise
      */
     public function is_file($path) {
         return is_file(self::file_path($path));
