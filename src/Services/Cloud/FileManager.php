@@ -198,4 +198,41 @@ class FileManager {
         }
         return true;
     }
+
+    /**
+     * Get files and sub directories of path passed as param
+     * 
+     * @param path Relative directory path to scan
+     * @return array 
+     */
+    public function scandir($path){
+        // Check if path exist and is a dir and not a file
+        if(!self::file_exists($path) || !self::is_dir($path))
+            return false;
+
+        // Check if $path end with /
+        if(substr($path, -1) != "/")
+            $path .= '/';
+            
+        // Get dir content
+        $scan_result = scandir(self::file_path($path));
+        
+        $content  = array();
+        
+        error_reporting(E_ERROR | E_PARSE);
+        foreach($scan_result as $file){
+            if($file !== '.' && $file !== '..'){
+                $content[] = array(
+                    'type' => self::is_dir($path . $file) ? 'dir':'file',
+                    'name' => $file,
+                    'url' => $path.$file,
+                    'size' => filesize(self::file_path($path . $file)),
+                    'mtime' => filectime(self::file_path($path . $file)),
+                );
+            }
+        }
+        error_reporting(E_ALL ^ E_WARNING);
+        
+        return $content;
+    }
 }
