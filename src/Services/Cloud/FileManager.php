@@ -2,6 +2,8 @@
 
 namespace App\Services\Cloud;
 
+use ZipArchive;
+
 class FileManager {
     private const ROOT_PATH = "C:/Users/X181539/Documents";
 
@@ -283,5 +285,27 @@ class FileManager {
             }
         }
         closedir($handle);
+    }
+
+    /**
+     * Unzip file in a new folder nammed with zip file name
+     * 
+     * @param path Relative zip file path
+     * @return path Relative zip path 
+     */
+    public function unzip_file($path){
+        $zip = new ZipArchive;
+        $zip_infos = pathinfo(self::file_path($path));
+        $dir = $zip_infos['dirname'] .'/'. $zip_infos['filename'];
+        if(file_exists($dir))
+            $dir .= '-' . date("YmdHis");
+        if ($zip->open(self::file_path($path)) === TRUE) {
+            mkdir($dir);
+            $zip->extractTo($dir);
+            $zip->close();
+            return self::relative_path($dir);
+        } else {
+            return false;
+        }
     }
 }
