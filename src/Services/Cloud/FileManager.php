@@ -72,7 +72,7 @@ class FileManager {
     /**
      * Create new empty file in the server.
      * 
-     * @param path Relative file/directory path
+     * @param path Relative file path
      * @return ~ the number of bytes that were written to the file, or FALSE on failure
      */
     public function create_file($path) {
