@@ -3,6 +3,7 @@
 namespace App\Controller\Cloud\API;
 
 use App\Services\Cloud\FileManager;
+use App\Services\Cloud\Notifications;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +18,7 @@ class DirController
      * Get directory data in request attachement.
      * @param url <PATH> The directory relative url in the server.
      */
-    public function GET_dir(FileManager $fm)
+    public function GET_dir(FileManager $fm, Notifications $notifications)
     {
         $request = Request::createFromGlobals();
 
@@ -27,13 +28,13 @@ class DirController
         } else if (!empty($request->query->get('url'))) {
             $path = $request->query->get('url');    // url passed params
         } else {
-            return self::JSONResponse(400, 'You must provide relative file path.');
+            return $notifications->JSONResponse(400, false, 'You must provide relative file path.');
         }
 
         $data = $fm->scandir($path);
 
         if(!$data) 
-            return self::JSONResponse(404, 'Directory <code>' . $path . '</code> was not found in the server.');
+            return $notifications->JSONResponse(404, 'Directory <code>' . $path . '</code> was not found in the server.');
 
         $response = new Response();
         $response->setContent(json_encode($data, JSON_UNESCAPED_SLASHES));
@@ -47,7 +48,7 @@ class DirController
      * Create an empty dir in the server.
      * @param url <PATH> The new file relative url to be created in the server.
      */
-    public function POST_dir(FileManager $fm)
+    public function POST_dir(FileManager $fm, Notifications $notifications)
     {
         $request = Request::createFromGlobals();
 
@@ -57,13 +58,13 @@ class DirController
         } else if (!empty($request->query->get('url'))) {
             $path = $request->query->get('url');    // url passed params
         } else {
-            return self::JSONResponse(400, 'You must provide relative file path.');
+            return $notifications->JSONResponse(400, false, 'You must provide relative file path.');
         }
 
         // create empty file
         if(!$fm->create_dir($path))
-            return self::JSONResponse(500, 'An error occured will trying to create <code>' . $path . '</code>');
-        return self::JSONResponse(201, '<code>' . $path . '</code> was successfully created in the server.');
+            return $notifications->JSONResponse(500, false, 'An error occured will trying to create <code>' . $path . '</code>');
+        return $notifications->JSONResponse(201, '<code>' . $path . '</code> was successfully created in the server.');
 
     }
 
@@ -74,7 +75,7 @@ class DirController
      * @param url <PATH> The new file relative url to be created in the server.
      * @param newpath <PATH> The new file path in the server.
      */
-    public function PUT_dir(FileManager $fm) {
+    public function PUT_dir(FileManager $fm, Notifications $notifications) {
         $request = Request::createFromGlobals();
 
         // Retrieve path param
@@ -83,7 +84,7 @@ class DirController
         } else if (!empty($request->query->get('url'))) {
             $path = $request->query->get('url');    // url passed params
         } else {
-            return self::JSONResponse(400, 'You must provide relative directory path.');
+            return $notifications->JSONResponse(400, false, 'You must provide relative directory path.');
         }
 
         // Retrieve newpath param
@@ -92,16 +93,16 @@ class DirController
         } else if (!empty($request->query->get('newurl'))) {
             $newpath = $request->query->get('newurl');    // url passed params
         } else {
-            return self::JSONResponse(400, 'You must provide new relative directory path.');
+            return $notifications->JSONResponse(400, false, 'You must provide new relative directory path.');
         }
 
         // Rename dir
         if(!empty($newpath)) {
             if($fm->rename($path, $newpath))
-                return self::JSONResponse(202, '<code>' . $path . '</code> was successfully renamed as <code>' . $newpath . '</code>.');
+                return $notifications->JSONResponse(202, '<code>' . $path . '</code> was successfully renamed as <code>' . $newpath . '</code>.');
         }
 
-        return self::JSONResponse(500, 'An error occured will trying to rename directory.');
+        return $notifications->JSONResponse(500, false, 'An error occured will trying to rename directory.');
     }
 
     /**
@@ -110,7 +111,7 @@ class DirController
      * Delete file in the server.
      * @param url <PATH> The new file relative url to be created in the server.
      */
-    public function DELETE_dir(FileManager $fm) {
+    public function DELETE_dir(FileManager $fm, Notifications $notifications) {
         $request = Request::createFromGlobals();
 
         // Retrieve path param
@@ -119,26 +120,13 @@ class DirController
         } else if (!empty($request->query->get('url'))) {
             $path = $request->query->get('url');    // url passed params
         } else {
-            return self::JSONResponse(400, 'You must provide relative file path.');
+            return $notifications->JSONResponse(400, false, 'You must provide relative file path.');
         }
 
         // Delete dir
         if($fm->delete_dir($path))
-            return self::JSONResponse(200, '<code>' . $path . '</code> was successfully deleted.');
+            return $notifications->JSONResponse(200, false, '<code>' . $path . '</code> was successfully deleted.');
         else
-            return self::JSONResponse(500, 'An error occured will trying to delete <code>' . $path . '</code>.');
-    }
-
-    private static $http_errors = [100 => 'Continue', 101 => 'Switching Protocols', 200 => 'OK', 201 => 'Created', 202 => 'Accepted', 203 => 'Non-Authoritative Information', 204 => 'No Content', 205 => 'Reset Content', 206 => 'Partial Content', 300 => 'Multiple Choices', 301 => 'Moved Permanently', 302 => 'Moved Temporarily', 303 => 'See Other', 304 => 'Not Modified', 305 => 'Use Proxy', 400 => 'Bad Request', 401 => 'Unauthorized', 402 => 'Payment Required', 403 => 'Forbidden', 404 => 'Not Found', 405 => 'Method Not Allowed', 406 => 'Not Acceptable', 407 => 'Proxy Authentication Required', 408 => 'Request Time-out', 409 => 'Conflict', 410 => 'Gone', 411 => 'Length Required', 412 => 'Precondition Failed', 413 => 'Request Entity Too Large', 414 => 'Request-URI Too Large', 415 => 'Unsupported Media Type', 500 => 'Internal Server Error', 501 => 'Not Implemented', 502 => 'Bad Gateway', 503 => 'Service Unavailable', 504 => 'Gateway Time-out', 505 => 'HTTP Version not supported'];
-        
-    private function JSONResponse($code, $msg) {
-        $response = new Response();
-        $response->setStatusCode($code);
-        $response->setContent(json_encode([
-            'msg'=> self::$http_errors[$code],
-            'detail' => $msg
-        ], JSON_UNESCAPED_SLASHES));
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
+            return $notifications->JSONResponse(500, false, 'An error occured will trying to delete <code>' . $path . '</code>.');
     }
 }
