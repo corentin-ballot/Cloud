@@ -228,8 +228,8 @@ class FileManager {
                     'type' => self::is_dir($path . $file) ? 'dir':'file',
                     'name' => $file,
                     'url' => $path.$file,
-                    'size' => filesize(self::file_path($path . $file)),
-                    'mtime' => filectime(self::file_path($path . $file)),
+                    'size' => self::is_dir($path . $file) ? '-' : filesize(self::file_path($path . $file)),
+                    'mtime' => 1000*filectime(self::file_path($path . $file)),
                 );
             }
         }
