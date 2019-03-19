@@ -127,12 +127,12 @@ class FileManager {
         if(substr($path, - 1) !== '/') 
             $path .= '/';
         // Backup destination file if it already exist to avoid accidental overwrite
-        if(self::file_exists($path . basename($file)))
-            self::create_file_backup($path . basename($file));
+        if(self::file_exists($path . $file->getClientOriginalName()))
+            self::create_file_backup($path . $file->getClientOriginalName());
         // Create path to avoid error
-        self::create_path($path . basename($file));
+        self::create_path($path . $file->getClientOriginalName());
         // Move uploaded file
-        return move_uploaded_file($file, self::file_path($path) . basename($file));
+        return move_uploaded_file($file, self::file_path($path) . $file->getClientOriginalName());
     }
 
     /**
