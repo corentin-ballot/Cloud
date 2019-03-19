@@ -21,23 +21,16 @@ class DirController
     public function GET_dir(FileManager $fm, Notifications $notifications)
     {
         $request = Request::createFromGlobals();
+        $data = $request->query->all(); // url passed params
+        if(isset($data['url'])) $path = $data['url']; else return $notifications->JSONResponse(400, false, 'You must provide relative file path.');
 
-        // Retrieve params
-        if (!empty(($request->request->get('url')))) { 
-            $path = $request->request->get('url');  // body passed params
-        } else if (!empty($request->query->get('url'))) {
-            $path = $request->query->get('url');    // url passed params
-        } else {
-            return $notifications->JSONResponse(400, false, 'You must provide relative file path.');
-        }
+        $scandir = $fm->scandir($path);
 
-        $data = $fm->scandir($path);
-
-        if(!$data) 
-            return $notifications->JSONResponse(404, 'Directory <code>' . $path . '</code> was not found in the server.');
+        if(!$scandir) 
+            return $notifications->JSONResponse(404, false, 'Directory <code>' . $path . '</code> was not found in the server.');
 
         $response = new Response();
-        $response->setContent(json_encode($data, JSON_UNESCAPED_SLASHES));
+        $response->setContent(json_encode($scandir, JSON_UNESCAPED_SLASHES));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
@@ -50,22 +43,16 @@ class DirController
      */
     public function POST_dir(FileManager $fm, Notifications $notifications)
     {
-        $request = Request::createFromGlobals();
-
-        // Retrieve params
-        if (!empty(($request->request->get('url')))) { 
-            $path = $request->request->get('url');  // body passed params
-        } else if (!empty($request->query->get('url'))) {
-            $path = $request->query->get('url');    // url passed params
-        } else {
-            return $notifications->JSONResponse(400, false, 'You must provide relative file path.');
-        }
+        // Get params
+        $request = Request::createFromGlobals();        
+        $data = json_decode($request->getContent(), true); // json body passed params
+        if(isset($data['url'])) $path = $data['url']; else return $notifications->JSONResponse(400, false, 'You must provide relative file path.');
 
         // create empty file
-        if(!$fm->create_dir($path))
-            return $notifications->JSONResponse(500, false, 'An error occured will trying to create <code>' . $path . '</code>');
-        return $notifications->JSONResponse(201, '<code>' . $path . '</code> was successfully created in the server.');
-
+        if($fm->create_dir($path))
+            return $notifications->JSONResponse(201, false, '<code>' . $path . '</code> was successfully created in the server.');
+            
+        return $notifications->JSONResponse(500, false, 'An error occured will trying to create <code>' . $path . '</code>');
     }
 
     /**
@@ -76,30 +63,15 @@ class DirController
      * @param newpath <PATH> The new file path in the server.
      */
     public function PUT_dir(FileManager $fm, Notifications $notifications) {
+        // Get params
         $request = Request::createFromGlobals();
-
-        // Retrieve path param
-        if (!empty(($request->request->get('url')))) { 
-            $path = $request->request->get('url');  // body passed params
-        } else if (!empty($request->query->get('url'))) {
-            $path = $request->query->get('url');    // url passed params
-        } else {
-            return $notifications->JSONResponse(400, false, 'You must provide relative directory path.');
-        }
-
-        // Retrieve newpath param
-        if (!empty(($request->request->get('newurl')))) { 
-            $newpath = $request->request->get('newurl');  // body passed params
-        } else if (!empty($request->query->get('newurl'))) {
-            $newpath = $request->query->get('newurl');    // url passed params
-        } else {
-            return $notifications->JSONResponse(400, false, 'You must provide new relative directory path.');
-        }
+        $data = json_decode($request->getContent(), true); // json body passed params
+        if(isset($data['url'])) $path = $data['url']; else return $notifications->JSONResponse(400, false, 'You must provide relative file path.');
+        if(isset($data['newurl'])) $newpath = $data['newurl']; else return $notifications->JSONResponse(400, false, 'You must provide new relative directory path.');
 
         // Rename dir
-        if(!empty($newpath)) {
-            if($fm->rename($path, $newpath))
-                return $notifications->JSONResponse(202, '<code>' . $path . '</code> was successfully renamed as <code>' . $newpath . '</code>.');
+        if($fm->rename($path, $newpath)) {
+            return $notifications->JSONResponse(202, false, '<code>' . $path . '</code> was successfully renamed as <code>' . $newpath . '</code>.');
         }
 
         return $notifications->JSONResponse(500, false, 'An error occured will trying to rename directory.');
@@ -112,21 +84,16 @@ class DirController
      * @param url <PATH> The new file relative url to be created in the server.
      */
     public function DELETE_dir(FileManager $fm, Notifications $notifications) {
+        // Get params
         $request = Request::createFromGlobals();
-
-        // Retrieve path param
-        if (!empty(($request->request->get('url')))) { 
-            $path = $request->request->get('url');  // body passed params
-        } else if (!empty($request->query->get('url'))) {
-            $path = $request->query->get('url');    // url passed params
-        } else {
-            return $notifications->JSONResponse(400, false, 'You must provide relative file path.');
-        }
+        $data = json_decode($request->getContent(), true); // json body passed params
+        if(isset($data['url'])) $path = $data['url']; else return $notifications->JSONResponse(400, false, 'You must provide relative file path.');
 
         // Delete dir
-        if($fm->delete_dir($path))
+        if($fm->delete_dir($path)) {
             return $notifications->JSONResponse(200, false, '<code>' . $path . '</code> was successfully deleted.');
-        else
-            return $notifications->JSONResponse(500, false, 'An error occured will trying to delete <code>' . $path . '</code>.');
+        }
+
+        return $notifications->JSONResponse(500, false, 'An error occured will trying to delete <code>' . $path . '</code>.');
     }
 }

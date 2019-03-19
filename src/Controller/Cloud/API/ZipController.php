@@ -24,24 +24,9 @@ class ZipController
     public function POST_zip(FileManager $fm, Notifications $notifications)
     {
         $request = Request::createFromGlobals();
-
-        // Retrieve url param
-        if (!empty(($request->request->get('url')))) { 
-            $path = $request->request->get('url');  // body passed params
-        } else if (!empty($request->query->get('url'))) {
-            $path = $request->query->get('url');    // url passed params
-        } else {
-            return $notifications->JSONResponse(400, false, 'You must provide relative file path.');
-        }
-
-        // Retrieve file list param
-        if (!empty(($request->request->get('files')))) { 
-            $file_list = $request->request->get('files');  // body passed params
-        } else if (!empty($request->query->get('files'))) {
-            $file_list = $request->query->get('files');    // url passed params
-        } else {
-            return $notifications->JSONResponse(400, false, 'You must provide a file list.');
-        }
+        $data = json_decode($request->getContent(), true); // json body passed params
+        if(isset($data['url'])) $path = $data['url']; else return $notifications->JSONResponse(400, false, 'You must provide relative file path.');
+        if(isset($data['file_list'])) $newpath = $data['files']; else return $notifications->JSONResponse(400, false, 'You must provide a file list.');
         
         $zip_path = $fm->zip_files($path, json_decode($file_list));
 
@@ -56,20 +41,15 @@ class ZipController
     public function POST_unzip(FileManager $fm, Notifications $notifications)
     {
         $request = Request::createFromGlobals();
-
-        // Retrieve url param
-        if (!empty(($request->request->get('url')))) { 
-            $path = $request->request->get('url');  // body passed params
-        } else if (!empty($request->query->get('url'))) {
-            $path = $request->query->get('url');    // url passed params
-        } else {
-            return $notifications->JSONResponse(400, false, 'You must provide relative file path.');
-        }
-        
+        $data = json_decode($request->getContent(), true); // json body passed params
+        if(isset($data['url'])) $path = $data['url']; else return $notifications->JSONResponse(400, false, 'You must provide relative file path.');
+                
         $unziped_path = $fm->unzip_file($path);
 
-        if($unziped_path)
+        if($unziped_path) {
             return $notifications->JSONResponse(200, false, '<code>' . $path . '</code> was successfully unzipped in <code>' . $unziped_path . '</code>.');
+        }
+
         return $notifications->JSONResponse(500, false, 'Failed to unzip <code>' . $path . '</code>.');
     }
 }
