@@ -26,7 +26,7 @@ class DirController
 
         $scandir = $fm->scandir($path);
 
-        if(!$scandir) 
+        if(!is_array($scandir)) 
             return $notifications->JSONResponse(404, false, 'Directory <code>' . $path . '</code> was not found in the server.');
 
         $response = new Response();
