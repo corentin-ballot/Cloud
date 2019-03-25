@@ -57,7 +57,7 @@ class FileController
     {
         // Get params
         $request = Request::createFromGlobals();
-        $data = $request->request->all(); // form passed params
+        $data = empty($request->request->all())?json_decode($request->getContent(), true):$request->request->all(); // form passed params
         if(isset($data['url'])) $path = $data['url']; else return $notifications->JSONResponse(400, false, 'You must provide relative file path.');
         $files = $request->files->all();
 
