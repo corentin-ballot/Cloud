@@ -5,6 +5,12 @@ app_index:
         template: /index.html.twig
     methods: GET
 
+app_about:
+    path: /about
+    controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController
+    defaults:
+        template: /about.html.twig
+    methods: GET
 
 cloud-controllers:
     resource: '../src/Controller/Cloud'
