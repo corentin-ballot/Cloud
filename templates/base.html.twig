@@ -17,8 +17,8 @@
 
         <div class="container">
             <header class="header">
-                <a href="{{ path('app_index')}}" class="header_logo">
-                    <img src="{{ asset('static/favicon.ico') }}">
+                <a href="/" class="header_logo">
+                    <img src="/static/favicon.ico">
                 </a>
 
                 <span class="mobile_title">{{ block('title') }}</span>
@@ -26,15 +26,15 @@
                 <nav id="navbar" role="navigation" hidden-mobile="true">
                     <ol>
                         <li class="nav_item" {% if app.request.get('_route') == 'app_index' %}aria-current="page"{% endif %}>
-                            <a class="nav_item_link" href="{{ path('app_index')}}">Accueil</a>
+                            <a class="nav_item_link" href="/">Accueil</a>
                         </li>
 
                         <li class="nav_item" {% if app.request.get('_route') == 'cloud_index' or app.request.get('_route') == 'cloud_index_home'  %}aria-current="page"{% endif %}>
-                            <a class="nav_item_link" href="{{ path('cloud_index_home')}}">Cloud</a>
+                            <a class="nav_item_link" href="/cloud">Cloud</a>
                         </li>
 
                         <li class="nav_item" {% if app.request.get('_route') == 'app_about' %}aria-current="page"{% endif %}>
-                            <a class="nav_item_link" href="{{ path('app_about')}}">About</a>
+                            <a class="nav_item_link" href="/about">About</a>
                         </li>
 
                         <li class="nav_item -wrapper"></li>
@@ -42,7 +42,7 @@
 
                         {# {% if is_granted('ROLE_USER') %} #}
                         <li class="nav_item -user" {% if app.request.get('_route') == 'app_profile' %}aria-current="page"{% endif %}>
-                            <a class="nav_item_link -icon" href="{{ path('app_profile')}}">
+                            <a class="nav_item_link -icon" href="/profile">
                                 <i class="material-icons">person</i>
                                 <div class="nav_item_link_userinfos">
                                     <span class="nav_item_link_userinfos_username">{% if is_granted('ROLE_USER') %}{{ app.user.username }}{% else %}anonyme{% endif %}</span>
@@ -51,14 +51,14 @@
                             </a>
                         </li>
                         <li class="nav_item">
-                            <a class="nav_item_link -icon" href="{{ path('app_logout') }}">
+                            <a class="nav_item_link -icon" href="/logout">
                             <i class="material-icons">power_settings_new</i>
                             <span class="_linkwithicon_text">Logout</span>
                             </a>
                         </li>
                         {# {% else %} #}
-                        <li class="nav_item" {% if app.request.get('_route') == 'app_register' %}aria-current="page"{% endif %}><a class="nav_item_link" href="{{ path('app_register') }}">Register</a></li>
-                        <li class="nav_item" {% if app.request.get('_route') == 'app_login' %}aria-current="page"{% endif %}><a class="nav_item_link" href="{{ path('app_login') }}">Login</a></li>
+                        <li class="nav_item" {% if app.request.get('_route') == 'app_register' %}aria-current="page"{% endif %}><a class="nav_item_link" href="/register">Register</a></li>
+                        <li class="nav_item" {% if app.request.get('_route') == 'app_login' %}aria-current="page"{% endif %}><a class="nav_item_link" href="/login">Login</a></li>
                         {# {% endif %} #}
                     </ol>
                 </nav>
