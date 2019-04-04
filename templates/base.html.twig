@@ -2,14 +2,85 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <meta name="viewport" content="width=device-width">
+        <title>{{ block('title') }}</title>
         <link rel="icon" type="image/png" href="/static/favicon.ico" />
 
         <link href="/static/reset.css" rel="stylesheet">
+        <link href="/static/base.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+
+        <div class="container">
+            <header class="header">
+                <a href="{{ path('app_index')}}" class="header_logo">
+                    <img src="{{ asset('static/favicon.ico') }}">
+                </a>
+
+                <span class="mobile_title">{{ block('title') }}</span>
+                
+                <nav id="navbar" role="navigation" hidden-mobile="true">
+                    <ol>
+                        <li class="nav_item" {% if app.request.get('_route') == 'app_index' %}aria-current="page"{% endif %}>
+                            <a class="nav_item_link" href="{{ path('app_index')}}">Accueil</a>
+                        </li>
+
+                        <li class="nav_item" {% if app.request.get('_route') == 'cloud_index' or app.request.get('_route') == 'cloud_index_home'  %}aria-current="page"{% endif %}>
+                            <a class="nav_item_link" href="{{ path('cloud_index_home')}}">Cloud</a>
+                        </li>
+
+                        <li class="nav_item" {% if app.request.get('_route') == 'app_about' %}aria-current="page"{% endif %}>
+                            <a class="nav_item_link" href="{{ path('app_about')}}">About</a>
+                        </li>
+
+                        <li class="nav_item -wrapper"></li>
+
+
+                        {# {% if is_granted('ROLE_USER') %} #}
+                        <li class="nav_item -user" {% if app.request.get('_route') == 'app_profile' %}aria-current="page"{% endif %}>
+                            <a class="nav_item_link -icon" href="{{ path('app_profile')}}">
+                                <i class="material-icons">person</i>
+                                <div class="nav_item_link_userinfos">
+                                    <span class="nav_item_link_userinfos_username">{% if is_granted('ROLE_USER') %}{{ app.user.username }}{% else %}anonyme{% endif %}</span>
+                                    <span class="nav_item_link_userinfos_email">{% if is_granted('ROLE_USER') %}{{ app.user.email }}{% else %}not@email.com{% endif %}</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="nav_item">
+                            <a class="nav_item_link -icon" href="{{ path('app_logout') }}">
+                            <i class="material-icons">power_settings_new</i>
+                            <span class="_linkwithicon_text">Logout</span>
+                            </a>
+                        </li>
+                        {# {% else %} #}
+                        <li class="nav_item" {% if app.request.get('_route') == 'app_register' %}aria-current="page"{% endif %}><a class="nav_item_link" href="{{ path('app_register') }}">Register</a></li>
+                        <li class="nav_item" {% if app.request.get('_route') == 'app_login' %}aria-current="page"{% endif %}><a class="nav_item_link" href="{{ path('app_login') }}">Login</a></li>
+                        {# {% endif %} #}
+                    </ol>
+                </nav>
+
+                <script>
+                    function toogleMobileNav() {
+                        document.getElementById('hamburger').classList.toggle('is-active');
+                        document.getElementById('obfuscator').setAttribute('aria-hidden', document.getElementById('obfuscator').getAttribute('aria-hidden') === 'false' ? true:false);
+                        document.getElementById('navbar').setAttribute('hidden-mobile', document.getElementById('navbar').getAttribute('hidden-mobile') === 'false' ? true:false);
+                    }
+                </script>
+                <button id="hamburger" class="hamburger hamburger--squeeze" type="button" onclick="toogleMobileNav()">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+                <div class="mobile_obfuscator" aria-hidden="true" id="obfuscator" onclick="toogleMobileNav()"></div>
+            </header>
+
+            {% block body %}{% endblock %}
+        </div>
+
         {% block javascripts %}{% endblock %}
     </body>
 </html>
