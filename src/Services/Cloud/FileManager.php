@@ -86,7 +86,7 @@ class FileManager {
     private function create_path($path) {
         $parts = explode('/', $path);
         $last = array_pop($parts);
-        $dir = file_path($path);
+        $dir = self::file_path($path);
         foreach($parts as $part)
             if(!is_dir($dir .= "/$part")) mkdir($dir);
     }
