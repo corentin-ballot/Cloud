@@ -2,10 +2,30 @@
 
 namespace App\Services\Cloud;
 
+use Symfony\Component\Security\Core\Security;
+
 use ZipArchive;
 
 class FileManager {
-    private const ROOT_PATH = "C:/Users/X181539/Documents";
+
+    private $security;
+
+    public function __construct(Security $security)
+    {
+        // Avoid calling getUser() in the constructor: auth may not
+        // be complete yet. Instead, store the entire Security object.
+        $this->security = $security;
+    }
+
+    private function get_root_path() {
+        $user = $this->security->getUser();
+        if(is_null($user)) {
+            // public repository
+            return "C:/Users/X181539/Documents/public";
+        } else {
+            return "C:/Users/X181539/Documents";
+        }
+    }
 
     /**
      * Generate absolute file path from relative one.
@@ -14,7 +34,7 @@ class FileManager {
      * @return string Absolute file path in the server. 
      */
     public function file_path($path) {
-        return self::ROOT_PATH . (substr($path, -1) == '/'?'':'/') . $path;
+        return self::get_root_path() . (substr($path, -1) == '/'?'':'/') . $path;
     }
 
     /**
@@ -24,7 +44,7 @@ class FileManager {
      * @return string Relative file path in the server. 
      */
     public function relative_path($path) {
-        return str_replace(self::ROOT_PATH, '', $path);
+        return str_replace(self::get_root_path(), '', $path);
     }
 
     /**
@@ -66,7 +86,7 @@ class FileManager {
     private function create_path($path) {
         $parts = explode('/', $path);
         $last = array_pop($parts);
-        $dir = self::ROOT_PATH;
+        $dir = file_path($path);
         foreach($parts as $part)
             if(!is_dir($dir .= "/$part")) mkdir($dir);
     }
