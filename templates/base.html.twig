@@ -40,7 +40,7 @@
                         <li class="nav_item -wrapper"></li>
 
 
-                        {# {% if is_granted('ROLE_USER') %} #}
+                        {% if is_granted('ROLE_USER') %}
                         <li class="nav_item -user" {% if app.request.get('_route') == 'app_profile' %}aria-current="page"{% endif %}>
                             <a class="nav_item_link -icon" href="/profile">
                                 <i class="material-icons">person</i>
@@ -56,10 +56,10 @@
                             <span class="_linkwithicon_text">Logout</span>
                             </a>
                         </li>
-                        {# {% else %} #}
+                        {% else %}
                         <li class="nav_item" {% if app.request.get('_route') == 'app_register' %}aria-current="page"{% endif %}><a class="nav_item_link" href="/register">Register</a></li>
                         <li class="nav_item" {% if app.request.get('_route') == 'app_login' %}aria-current="page"{% endif %}><a class="nav_item_link" href="/login">Login</a></li>
-                        {# {% endif %} #}
+                        {% endif %}
                     </ol>
                 </nav>
 
