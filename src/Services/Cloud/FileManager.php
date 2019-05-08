@@ -21,9 +21,9 @@ class FileManager {
         $user = $this->security->getUser();
         if(is_null($user)) {
             // public repository
-            return "C:/Users/X181539/Documents/public";
+            return "F:/Corentin/Documents/TESTS/public";
         } else {
-            return "C:/Users/X181539/Documents";
+            return "F:/Corentin/Documents/TESTS";
         }
     }
 
@@ -86,7 +86,7 @@ class FileManager {
     private function create_path($path) {
         $parts = explode('/', $path);
         $last = array_pop($parts);
-        $dir = self::file_path($path);
+        $dir = self::get_root_path();
         foreach($parts as $part)
             if(!is_dir($dir .= "/$part")) mkdir($dir);
     }
