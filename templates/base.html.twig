@@ -4,11 +4,11 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width">
         <title>{{ block('title') }}</title>
-        <link rel="icon" type="image/png" href="/static/favicon.ico" />
+        <link rel="icon" type="image/png" href="{{ asset( 'static/favicon.ico' ) }}" />
 
-        <link href="/static/reset.css" rel="stylesheet">
-        <link href="/static/base.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+        <link rel="stylesheet" href="{{ asset( 'static/reset.css' ) }}">
+        <link rel="stylesheet" href="{{ asset( 'static/base.css' ) }}">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
         {% block stylesheets %}{% endblock %}
@@ -18,7 +18,7 @@
         <div class="container">
             <header class="header">
                 <a href="/" class="header_logo">
-                    <img src="/static/favicon.ico">
+                    <img src="{{ asset( 'static/favicon.ico' ) }}">
                 </a>
 
                 <span class="mobile_title">{{ block('title') }}</span>

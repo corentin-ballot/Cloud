@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Cloud;
+namespace App\Services;
 
 use Symfony\Component\Security\Core\Security;
 
@@ -21,9 +21,9 @@ class FileManager {
         $user = $this->security->getUser();
         if(is_null($user)) {
             // public repository
-            return "F:/Corentin/Documents/TESTS/public";
+            return $_SERVER['CLOUD_PUBLIC_DIR'];
         } else {
-            return "F:/Corentin/Documents/TESTS";
+            return $_SERVER['CLOUD_DIR'];
         }
     }
 

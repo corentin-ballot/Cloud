@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Controller\Cloud\API;
+namespace App\Controller\API;
 
-use App\Services\Cloud\FileManager;
-use App\Services\Cloud\Notifications;
+use App\Services\FileManager;
+use App\Services\Notifications;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;

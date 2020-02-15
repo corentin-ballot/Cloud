@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Cloud;
+namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -9,13 +9,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class CloudController extends AbstractController
 {
     /**
-     * @Route("/cloud", name="cloud_index_home", methods={"GET"})
-     * @Route("/cloud/{path}", name="cloud_index", methods={"GET"}, requirements={"path"=".+"})
+     * @Route("/", name="cloud_index_home", methods={"GET"})
+     * @Route("/{path}", name="cloud_index", methods={"GET"}, requirements={"path":".+","path":"^(?!static).+","path":"^(?!api).+"})
      */
     public function index()
     {
         return $this->render(
-            'Cloud/index.html.twig'
+            'index.html.twig'
         );
     }
 }

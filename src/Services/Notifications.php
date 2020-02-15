@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Cloud;
+namespace App\Services;
 
 use ZipArchive;
 
