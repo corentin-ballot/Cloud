@@ -4,12 +4,12 @@ security:
             algorithm: auto
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
-    #providers:
+    providers:
         # used to reload user from session & other features (e.g. switch_user)
-        # app_user_provider:
-            # entity:
-                # class: Auth\Entity\User
-                # property: username
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: username
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -24,8 +24,8 @@ security:
 
             # guard:
             #     authenticators:
-            #         - Auth\Security\Authenticator
-            #     entry_point: Auth\Security\Authenticator
+            #         - App\Security\Authenticator
+            #     entry_point: App\Security\Authenticator
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
 
