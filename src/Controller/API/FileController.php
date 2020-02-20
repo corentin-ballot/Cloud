@@ -7,9 +7,9 @@ use App\Services\Notifications;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\Stream;
 
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -34,14 +34,16 @@ class FileController
         }
 
         // Return file as binary
-        $response = new BinaryFileResponse($fm->file_path($path));
-
+        $file=$fm->file_path($path);
+        $stream  = new Stream($file);
+        $response = new BinaryFileResponse($stream);
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
-            basename($fm->file_path($path))
+            basename($file)
         );
-
+        
         $response->headers->set('Content-Disposition', $disposition);
+        $response->headers->set('Content-Length', filesize($file));
 
         return $response;
     }
