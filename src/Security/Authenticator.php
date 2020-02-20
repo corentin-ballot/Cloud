@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -13,6 +14,12 @@ class Authenticator extends BasicAuthenticationEntryPoint
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        return new RedirectResponse($_SERVER['LOGIN_URL']."?source=".urlencode($request->getUri()), 302, array("Cookie" => $request->cookies->all()));
+        $response = new RedirectResponse($_SERVER['LOGIN_URL']."?source=".urlencode($request->getUri()));
+        $host=$request->getHost();
+        foreach($request->cookies->all() as $key => $value) {
+            $response->headers->setCookie(Cookie::create($key, $value, 0, null, substr($host, strpos($host, '.'))));
+        }
+
+        return $response;
     }
 }
