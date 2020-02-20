@@ -13,6 +13,6 @@ class Authenticator extends BasicAuthenticationEntryPoint
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        return new RedirectResponse($_SERVER['LOGIN_URL']."?source=".urlencode($request->getUri()));
+        return new RedirectResponse($_SERVER['LOGIN_URL']."?source=".urlencode($request->getUri()), 302, array("Cookie" => $request->cookies->all()));
     }
 }
