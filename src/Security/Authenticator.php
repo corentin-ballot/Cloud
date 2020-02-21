@@ -14,11 +14,9 @@ class Authenticator extends BasicAuthenticationEntryPoint
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        $response = new RedirectResponse($_SERVER['LOGIN_URL']."?source=".urlencode($request->getUri()));
-        // $host=$request->getHost();
-        // foreach($request->cookies->all() as $key => $value) {
-        //     $response->headers->setCookie(Cookie::create($key, $value, 0, null, substr($host, strpos($host, '.'))));
-        // }
+        if (null !== $qs = $request->getQueryString()) { $qs = '?'.$qs; }
+        $source="//".$request->getHttpHost().$request->getBaseUrl().$request->getPathInfo().$qs;
+        $response = new RedirectResponse($_SERVER['LOGIN_URL']."?source=".urlencode($source));
 
         return $response;
     }
