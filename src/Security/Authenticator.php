@@ -16,7 +16,7 @@ class Authenticator extends BasicAuthenticationEntryPoint
     {
         if (null !== $qs = $request->getQueryString()) { $qs = '?'.$qs; }
         $source="https://".$request->getHttpHost().$request->getBaseUrl().$request->getPathInfo().$qs;
-        $response = new RedirectResponse($_SERVER['LOGIN_URL']."?source=".urlencode($source));
+        $response = new RedirectResponse($_SERVER['LOGIN_URL']."?source=".urlencode($source), 307);
 
         return $response;
     }
